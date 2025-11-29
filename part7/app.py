@@ -77,8 +77,7 @@ def search_sonnet(sonnet: Sonnet, query: str) -> SearchResult:
         spans = find_spans(line_raw.lower(), q)
         if spans:
             # ToDo 1: Use an instance of class LineMatch
-            line_matches_instance = LineMatch(idx, line_raw, spans)
-            line_matches.append(line_matches_instance)
+            line_matches.append(LineMatch(idx, line_raw, spans))
     total = len(title_spans) + sum(len(lm.spans) for lm in line_matches)
     # ToDo 1: Use an instance of class SearchResult
     return SearchResult(title_raw, title_spans, line_matches, total)
