@@ -21,3 +21,6 @@ Notes:
 """
 
 POETRYDB_URL = "https://poetrydb.org/author,title/Shakespeare;Sonnet"
+
+CACHE_FILENAME = "sonnets.json"
+
