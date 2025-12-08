@@ -66,8 +66,8 @@ def ansi_highlight(text: str, spans):
 
 
 def search_sonnet(sonnet: Sonnet, query: str) -> SearchResult:
-    title_raw = str(sonnet["title"])
-    lines_raw = sonnet["lines"]  # list[str]
+    title_raw = str(sonnet.title)
+    lines_raw = sonnet.lines  # list[str]
 
     q = query.lower()
     title_spans = find_spans(title_raw.lower(), q)
@@ -160,10 +160,8 @@ def fetch_sonnets_from_api() -> List[Sonnet]:
     # ToDo 0: Copy your solution from Part 6
 
     # POETRYDB_URL already contains the URL
-    url = "https://poetrydb.org/author,title/Shakespeare;Sonnet"
-    sonnets = []
     try:
-        with urllib.request.urlopen(url) as response:
+        with urllib.request.urlopen(POETRYDB_URL) as response:
             sonnets = json.load(response)
         if not isinstance(sonnets, list):
             raise RuntimeError("Unexpected data format")
@@ -198,15 +196,17 @@ def load_sonnets() -> List[Sonnet]:
     if os.path.exists(file):
         try:
             with open(file, "r", encoding="utf-8") as json_file:
-                sonnets = json.load(json_file)
-            print("Loaded sonnets from cache.")
-            return sonnets
+                sonnets_dicts = json.load(json_file)
         except json.JSONDecodeError:
             print("Cache file corrupted")
-    print("Downloaded sonnets from PoetryDB.")
-    with open(file, "w", encoding="utf-8") as json_file:
-        json.dump(sonnets, json_file, indent=2)
-    return fetch_sonnets_from_api()
+        print("Loaded sonnets from cache.")
+    else:
+        sonnets_dicts = fetch_sonnets_from_api()
+        with open(file, "w", encoding="utf-8") as json_file:
+            json.dump(sonnets_dicts, json_file, indent=2)
+        print("Downloaded sonnets from PoetryDB.")
+    sonnets = [Sonnet(s_inst) for s_inst in sonnets_dicts]
+    return sonnets
 
 # ---------- Config handling (carry over from Part 5) ----------
 
@@ -245,7 +245,7 @@ def save_config(cfg: Configuration) -> None:
 
     try:
         with open(config_file_path, "w") as config_file:
-            json.dump(cfg, config_file, indent=4)
+            json.dump(cfg.to_dict(), config_file, indent=4)
     except OSError:
         print(f"Writing config.json failed.")
 

@@ -38,7 +38,11 @@ class Configuration:
         if "search_mode" in other and other["search_mode"] in ["AND", "OR"]:
             self.search_mode = other["search_mode"]
 
-
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            "highlight": self.highlight,
+            "search_mode": self.search_mode,
+        }
 
 class Sonnet:
     def __init__(self, sonnet_data: Dict[str, Any]):
